@@ -6,35 +6,47 @@ using UnityEngine;
 public class FPController : MonoBehaviour
 {
     /* TO DO
+     * new movement controller
      *  jumpimpulse needs to be affected by gravity
      *  adding float - affected by gravity
+     *  dash movement
+     *  double jumping - check for isgrounded && doublejumpcharge - resets on groundtouch
      */
 
     [SerializeField] private int movementSpeed;
     [SerializeField] private int jumpImpulse;
     [SerializeField] private int sprintSpeed;
-    private Rigidbody rb;
+    [SerializeField] private int dashImpulse;
     private bool isGrounded;
     public float mouseSensitivity = 100f;
+    private float mouseVertical = 0f;
+    private float mouseHorizontal;
+    public Camera cam;
+    private Vector3 moveDirection;
     public Transform playerController;
-    float xRotation = 0f;
+    private Rigidbody rb;
+
 
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody>(); //assigns the rigidbody component of the Player to rb 
+        cam = GetComponentInChildren<Camera>();
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update() {
-        float mouseHorizontal = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseVertical = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        //multiplied by sensitivity - allows user to adjust cam sensitivity
+        mouseHorizontal = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        mouseVertical -= Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime; 
+        
+        //clamps camera - stops it from moving past 90 degrees above and below
+        mouseVertical = Mathf.Clamp(mouseVertical, -90f, 90f);
 
-        xRotation -= mouseVertical;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        cam.transform.localRotation = Quaternion.Euler(mouseVertical, 0f, 0f); //vertical rotation
+        playerController.transform.Rotate(0, mouseHorizontal, 0); //horizontal rotation
 
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        playerController.Rotate(Vector3.up * mouseHorizontal);
-
+        Debug.Log("isgrounded: " + isGrounded);
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded == true) {
             Jump();
         }
@@ -55,6 +67,9 @@ public class FPController : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.D)) {
         transform.Translate(new Vector3(movementSpeed, 0, 0) * Time.deltaTime);
+        }
+        if(Input.GetKeyDown(KeyCode.LeftShift)) {
+           // rb.AddForce(, 0, 0, ForceMode.Impulse);
         }
     }
 
