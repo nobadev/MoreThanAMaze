@@ -10,11 +10,13 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float gravity;
     [SerializeField] float pushPower = 2.0f;
     [SerializeField] float jumpImpulse;
+    [SerializeField] float dashImpulse;
+    [SerializeField] float dashCooldown;
     [SerializeField] float airControl;
-    [SerializeField] private AnimationCurve jumpFallOff;
     [SerializeField] int maxDoubleJumps;
     public bool isGrounded;
     public bool isFalling;
+    public bool isDashing;
 
     //Movement
     Vector2 movementDirection;
@@ -24,6 +26,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float jumpVelocity;
     float airSpeed = 4.0f;
     int doubleJumpCounter;
+    float dashTime = 0.25f;
 
     //Camera
     Vector2 mouseVector;
@@ -36,13 +39,22 @@ public class PlayerController : MonoBehaviour {
     CharacterController charController;
 
     /* To-Do
-     * do the jump stuff w/ air control
+     * do the jump stuff w/ air control - nearly done no air control
      * interaction with rigidbodies - DONE
      * good slope detection
      * slide off of steep slopes
-     * dash
+     * dash - nearly done
+     * code cleanup
      */
 
+
+    /* BUGS
+     * while dashing, letting go of a directional key midway through a dash..
+     * ..makes it dash forwards - caused by dashing forwards if no input is detected
+     * 
+     * 
+     * 
+     */
     // Start is called before the first frame update
     void Start() {
         charController = GetComponent<CharacterController>();
@@ -52,7 +64,7 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        Debug.Log(doubleJumpCounter);
+        Debug.Log(dashTime);
         GetPlayerInput();
         CameraMovement();
 
@@ -76,14 +88,24 @@ public class PlayerController : MonoBehaviour {
             isJumping = true;
             JumpState();
         }
+
+        if(Input.GetKeyDown(KeyCode.LeftShift)) {
+            isDashing = true;
+            StartCoroutine("DashState");
+        }
     }
 
     private void PlayerMovement() {
         
         movementDirection.Normalize();
-
         downSpeed += gravity * Time.deltaTime;
-        velocity = (transform.right * movementDirection.x + transform.forward * movementDirection.y) * movementSpeed + Vector3.up * downSpeed;
+        velocity = (transform.right * movementDirection.x + transform.forward * movementDirection.y) * movementSpeed;
+        if(isDashing) {
+            downSpeed = 0.0f;
+        }
+        else {
+            velocity += Vector3.up * downSpeed;
+        }
         charController.Move(velocity * Time.deltaTime);
 
         //checks if player is grounded and resets its y velocity, otherwise it continues to stack
@@ -100,7 +122,7 @@ public class PlayerController : MonoBehaviour {
         transform.Rotate(Vector3.up * mouseVector.x * mouseSensitivity);
     }
 
-    private void JumpState() {
+    private void JumpState() { //convert to coroutine maybe?
         FallState();
         if(charController.isGrounded) {
 
@@ -125,6 +147,24 @@ public class PlayerController : MonoBehaviour {
         }
 
         isJumping = false;  
+    }
+
+    private IEnumerator DashState() {
+
+        float startTime = Time.time;
+
+        while(Time.time < startTime + dashTime) {
+            if(movementDirection.x != 0 || movementDirection.y != 0) {
+                charController.Move((transform.forward * movementDirection.y + transform.right * movementDirection.x) * dashImpulse * Time.deltaTime);
+                yield return null;
+            }
+            else {
+                charController.Move(transform.forward * dashImpulse * Time.deltaTime);
+                yield return null;
+            }
+        }
+        isDashing = false;
+
     }
 
     private void FallState() {

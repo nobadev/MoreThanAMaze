@@ -1083,7 +1083,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.35
   m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -1099,22 +1099,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457e9a432e29cf54692433cbfbe60abe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 5
+  movementSpeed: 8
   mouseSensitivity: 3
   playerCam: {fileID: 963194228}
   gravity: -13
-  pushPower: 2
-  jumpImpulse: 3
+  pushPower: 6
+  jumpImpulse: 1.5
+  dashImpulse: 15
+  dashCooldown: 0
   airControl: 0
-  jumpFallOff:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   maxDoubleJumps: 1
   isGrounded: 0
   isFalling: 0
+  isDashing: 0
   jumpVelocity: 0
   isJumping: 0
 --- !u!114 &373754006
