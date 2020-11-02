@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour {
             doubleJumpCounter = 0;
         }
     }
-
+    // called every physics step
     private void FixedUpdate() {
         isGrounded = charController.isGrounded;
         isFalling = !charController.isGrounded;
@@ -80,6 +80,7 @@ public class PlayerController : MonoBehaviour {
         FallState();
     }
 
+    //Gets player input - called in Update()
     private void GetPlayerInput() {
         movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         mouseVector = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -95,6 +96,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    //Player movement
     private void PlayerMovement() {
         
         movementDirection.Normalize();
@@ -115,6 +117,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    //Camera
     private void CameraMovement() {
         yRotation -= mouseVector.y * mouseSensitivity;
         yRotation = Mathf.Clamp(yRotation, -90.0f, 90.0f);
@@ -122,6 +125,7 @@ public class PlayerController : MonoBehaviour {
         transform.Rotate(Vector3.up * mouseVector.x * mouseSensitivity);
     }
 
+    //jump movement
     private void JumpState() { //convert to coroutine maybe?
         FallState();
         if(charController.isGrounded) {
@@ -149,6 +153,7 @@ public class PlayerController : MonoBehaviour {
         isJumping = false;  
     }
 
+    //dash movement
     private IEnumerator DashState() {
 
         float startTime = Time.time;
