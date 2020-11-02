@@ -52,7 +52,8 @@ public class PlayerController : MonoBehaviour {
      * while dashing, letting go of a directional key midway through a dash..
      * ..makes it dash forwards - caused by dashing forwards if no input is detected
      * 
-     * 
+     * charactercontroller gets "warped"  on platform - caused by being parented by..
+     * ..the platform
      * 
      */
     // Start is called before the first frame update
