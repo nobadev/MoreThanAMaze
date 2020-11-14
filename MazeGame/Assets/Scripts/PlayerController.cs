@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float dashCooldown;
     [SerializeField] float airControl;
     [SerializeField] int maxDoubleJumps;
+    [SerializeField] uint dashLimit = 100;
     public bool isGrounded;
     public bool isFalling;
     public bool isDashing;
@@ -43,8 +44,9 @@ public class PlayerController : MonoBehaviour {
      * interaction with rigidbodies - DONE
      * good slope detection
      * slide off of steep slopes
-     * dash - nearly done
+     * dash - nearly done add dash limit
      * code cleanup
+     * 
      */
 
 
@@ -161,6 +163,7 @@ public class PlayerController : MonoBehaviour {
 
         while(Time.time < startTime + dashTime) {
             if(movementDirection.x != 0 || movementDirection.y != 0) {
+                dashLimit -= 50;
                 charController.Move((transform.forward * movementDirection.y + transform.right * movementDirection.x) * dashImpulse * Time.deltaTime);
                 yield return null;
             }
@@ -172,6 +175,12 @@ public class PlayerController : MonoBehaviour {
         isDashing = false;
 
     }
+
+    /*
+    private IEnumerator DashCounter() {
+        
+    }
+    */
 
     private void FallState() {
         if(isFalling) {
