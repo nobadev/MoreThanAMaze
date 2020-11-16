@@ -13,22 +13,16 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float dashImpulse;
     [SerializeField] float dashCooldown;
     [SerializeField] float airControl;
-    [SerializeField] int maxDoubleJumps;
     [SerializeField] uint dashLimit = 100;
-    private AudioSource playerAudioSource;
-    private AudioManager audioManager;
+    [SerializeField] float jumpVelocity;
+    [SerializeField] int maxDoubleJumps;
     [SerializeField] private float timeBetweenStep;
-    public bool isGrounded;
-    public bool isFalling;
-    public bool isDashing;
-    private int footstepRandomIndex;
-    float timeSinceStep = 0;
+
     //Movement
     Vector2 movementDirection;
     Vector3 velocity;
     Vector3 airControlVelocity;
     float downSpeed = 0.0f;
-    [SerializeField] float jumpVelocity;
     float airSpeed = 4.0f;
     int doubleJumpCounter;
     float dashTime = 0.25f;
@@ -40,7 +34,18 @@ public class PlayerController : MonoBehaviour {
     //Player States
     [SerializeField] bool isJumping;
     [SerializeField] bool isWalking;
+    public bool isGrounded;
+    public bool isFalling;
+    public bool isDashing;
     
+    //Audio
+    private AudioManager audioManager;
+    private AudioSource playerAudioSource;
+
+    //Footstep things
+    private int footstepRandomIndex;
+    float timeSinceStep = 0;
+
     //References
     CharacterController charController;
 
@@ -67,8 +72,8 @@ public class PlayerController : MonoBehaviour {
 
     private void Awake() {
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
-        
     }
+
     // Start is called before the first frame update
     void Start() {
         charController = GetComponent<CharacterController>();
@@ -79,7 +84,7 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        Debug.Log(dashTime);
+        DebugConsole();
         GetPlayerInput();
         CameraMovement();
 
@@ -88,6 +93,7 @@ public class PlayerController : MonoBehaviour {
             doubleJumpCounter = 0;
         }
     }
+
     // called every physics step
     private void FixedUpdate() {
         isGrounded = charController.isGrounded;
@@ -95,6 +101,11 @@ public class PlayerController : MonoBehaviour {
         PlayerMovement();
         FallState();
         WalkState();
+    }
+
+    private void DebugConsole() {
+        Debug.Log(timeSinceStep);
+
     }
 
     //Gets player input - called in Update()
@@ -202,7 +213,11 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    /*
+    /* When dashing..
+     * - minus one charge
+     * - start generating a new charge over time specified by dashchargeperrate (dashchargetime += Time.fixeddeltatime * dashchargeperrate)
+     * - if no charges - return false - if false - dont dash
+     * 
     private IEnumerator DashCounter() {
         
     }
