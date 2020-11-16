@@ -15,10 +15,14 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float airControl;
     [SerializeField] int maxDoubleJumps;
     [SerializeField] uint dashLimit = 100;
+    private AudioSource playerAudioSource;
+    private AudioManager audioManager;
+    [SerializeField] private float timeBetweenStep;
     public bool isGrounded;
     public bool isFalling;
     public bool isDashing;
-
+    private int footstepRandomIndex;
+    float timeSinceStep = 0;
     //Movement
     Vector2 movementDirection;
     Vector3 velocity;
@@ -35,6 +39,7 @@ public class PlayerController : MonoBehaviour {
 
     //Player States
     [SerializeField] bool isJumping;
+    [SerializeField] bool isWalking;
     
     //References
     CharacterController charController;
@@ -45,6 +50,7 @@ public class PlayerController : MonoBehaviour {
      * good slope detection
      * slide off of steep slopes
      * dash - nearly done add dash limit
+     * MAKE FOOTSTEPS WORK AT INTERVALS
      * code cleanup
      * 
      */
@@ -58,9 +64,15 @@ public class PlayerController : MonoBehaviour {
      * ..the platform
      * 
      */
+
+    private void Awake() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        
+    }
     // Start is called before the first frame update
     void Start() {
         charController = GetComponent<CharacterController>();
+        playerAudioSource = GetComponent<AudioSource>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -70,6 +82,7 @@ public class PlayerController : MonoBehaviour {
         Debug.Log(dashTime);
         GetPlayerInput();
         CameraMovement();
+
 
         if(charController.isGrounded) {
             doubleJumpCounter = 0;
@@ -81,6 +94,7 @@ public class PlayerController : MonoBehaviour {
         isFalling = !charController.isGrounded;
         PlayerMovement();
         FallState();
+        WalkState();
     }
 
     //Gets player input - called in Update()
@@ -118,6 +132,9 @@ public class PlayerController : MonoBehaviour {
             downSpeed = 0.0f;
             charController.slopeLimit = 45.0f;
         }
+        if(isWalking) {
+            PlayFootsteps();
+        }
     }
 
     //Camera
@@ -126,6 +143,15 @@ public class PlayerController : MonoBehaviour {
         yRotation = Mathf.Clamp(yRotation, -90.0f, 90.0f);
         playerCam.localEulerAngles = Vector3.right * yRotation;
         transform.Rotate(Vector3.up * mouseVector.x * mouseSensitivity);
+    }
+
+    private void WalkState() {
+        if(charController.velocity.magnitude > 2f) {
+            isWalking = true;
+        }
+        else {
+            isWalking = false;
+        }
     }
 
     //jump movement
@@ -211,6 +237,24 @@ public class PlayerController : MonoBehaviour {
 
         // Apply the push
         body.velocity = pushDir * pushPower;
+    }
+
+    private void PlayFootsteps() {
+        StartCoroutine("PlayFootstepSound", timeBetweenStep);
+    }
+
+    private IEnumerator PlayFootstepSound() {
+
+        timeSinceStep += Time.fixedDeltaTime;
+
+        if (charController.isGrounded && !playerAudioSource.isPlaying && timeSinceStep >= timeBetweenStep) { //only plays if character is grounded, and if no other audioclip is playing
+            footstepRandomIndex = Random.Range(0, 3);
+            playerAudioSource.clip = audioManager.sound.footstep[footstepRandomIndex]; //takes audio clip from audiomanager gameobject
+            playerAudioSource.pitch = Random.Range(0.95f, 1.05f);
+            playerAudioSource.Play();
+            timeSinceStep = 0;
+            yield return new WaitForSeconds(1);
+        }
     }
 }
 
