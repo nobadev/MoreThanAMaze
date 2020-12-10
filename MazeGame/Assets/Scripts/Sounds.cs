@@ -8,7 +8,7 @@ public class Sounds
 {
     public AudioClip[] footstep;
 
-    [HideInInspector] public AudioSource source;
+    //[HideInInspector] public AudioSource source;
 
     
 }

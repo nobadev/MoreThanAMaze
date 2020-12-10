@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
     //Inspector fields
@@ -11,7 +12,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float pushPower = 2.0f;
     [SerializeField] float jumpImpulse;
     [SerializeField] float dashImpulse;
-    [SerializeField] float dashCooldown;
     [SerializeField] float airControl;
     [SerializeField] uint dashLimit = 100;
     [SerializeField] float jumpVelocity;
@@ -27,6 +27,21 @@ public class PlayerController : MonoBehaviour {
     int doubleJumpCounter;
     float dashTime = 0.25f;
 
+    //Dash
+    [SerializeField] Text dashText;
+    [SerializeField] float dashChargeRate;
+    [SerializeField] float dashCharge = 100f;
+
+    //Slopes
+    Vector3 forward;
+    float maxGroundAngle;
+    float currentGroundAngle;
+    RaycastHit hitSlope;
+    float height;
+    [SerializeField] float heightPadding;
+    float slopeAngle;
+    [SerializeField] float raycastFireDistance;
+    
     //Camera
     Vector2 mouseVector;
     float yRotation = 0.0f;
@@ -78,6 +93,7 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         charController = GetComponent<CharacterController>();
         playerAudioSource = GetComponent<AudioSource>();
+        height = 0.5f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -87,9 +103,9 @@ public class PlayerController : MonoBehaviour {
         DebugConsole();
         GetPlayerInput();
         CameraMovement();
+        DashCheck();
 
-
-        if(charController.isGrounded) {
+        if (charController.isGrounded) {
             doubleJumpCounter = 0;
         }
     }
@@ -103,8 +119,22 @@ public class PlayerController : MonoBehaviour {
         WalkState();
     }
 
+    private void DashCheck() {
+        if (dashCharge < 100 && !isDashing) {
+            StartCoroutine("DashCounter");
+        }
+
+        if (dashCharge > 100) {
+            dashCharge = 100;
+        }
+    }
+
     private void DebugConsole() {
-        Debug.Log(timeSinceStep);
+        //Debug.Log(timeSinceStep);
+        //Debug.DrawLine(transform.position, -transform.right, Color.blue);
+        //Debug.Log(onSlope());
+
+        //dashText.text = "DashC: " + dashCharge;
 
     }
 
@@ -119,8 +149,10 @@ public class PlayerController : MonoBehaviour {
         }
 
         if(Input.GetKeyDown(KeyCode.LeftShift)) {
-            isDashing = true;
-            StartCoroutine("DashState");
+            if(dashCharge >= 50) {
+                isDashing = true;
+                StartCoroutine("DashState");
+            }
         }
     }
 
@@ -145,6 +177,10 @@ public class PlayerController : MonoBehaviour {
         }
         if(isWalking) {
             PlayFootsteps();
+        }
+
+        if ((movementDirection.y != 0 || movementDirection.x != 0) && onSlope()) {
+           // velocity = Vector3.ProjectOnPlane(hitSlope., hitSlope.normal) * Time.deltaTime;
         }
     }
 
@@ -194,8 +230,25 @@ public class PlayerController : MonoBehaviour {
     }
 
     //dash movement
+
+    private bool onSlope() {
+        if (isJumping) {
+            return false;
+        }
+
+        Debug.DrawRay(transform.position, Vector3.down, Color.red);
+        if (Physics.Raycast(transform.position, Vector3.down, out hitSlope, raycastFireDistance + 0.1f)) {
+            slopeAngle = (Vector3.Angle(hitSlope.normal, transform.forward) - 90);
+            if (hitSlope.normal != Vector3.up) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private IEnumerator DashState() {
 
+        dashCharge -= 50;
         float startTime = Time.time;
 
         while(Time.time < startTime + dashTime) {
@@ -212,23 +265,26 @@ public class PlayerController : MonoBehaviour {
         isDashing = false;
 
     }
-
-    /* When dashing..
-     * - minus one charge
-     * - start generating a new charge over time specified by dashchargeperrate (dashchargetime += Time.fixeddeltatime * dashchargeperrate)
-     * - if no charges - return false - if false - dont dash
-     * 
+        /* When dashing..
+         * - minus one charge
+         * - start generating a new charge over time specified by dashchargeperrate (dashchargetime += Time.fixeddeltatime * dashchargeperrate)
+         * - if no charges - return false - if false - dont dash
+         */ 
     private IEnumerator DashCounter() {
         
+        dashCharge += dashChargeRate;
+        yield return null;
     }
-    */
+        
 
     private void FallState() {
         if(isFalling) {
             charController.slopeLimit = 90.0f;
+            //slopeAngle = 0f;
         }
     }
 
+    //COLLISION
     //adds "fake physics" collision with a charcontroller
     void OnControllerColliderHit(ControllerColliderHit hit) {
         Rigidbody body = hit.collider.attachedRigidbody;
@@ -254,6 +310,7 @@ public class PlayerController : MonoBehaviour {
         body.velocity = pushDir * pushPower;
     }
 
+    //AUDIO
     private void PlayFootsteps() {
         StartCoroutine("PlayFootstepSound", timeBetweenStep);
     }
@@ -261,8 +318,8 @@ public class PlayerController : MonoBehaviour {
     private IEnumerator PlayFootstepSound() {
 
         timeSinceStep += Time.fixedDeltaTime;
-
-        if (charController.isGrounded && !playerAudioSource.isPlaying && timeSinceStep >= timeBetweenStep) { //only plays if character is grounded, and if no other audioclip is playing
+        //only plays if character is grounded, and if no other audioclip is playing
+        if (charController.isGrounded && !playerAudioSource.isPlaying && timeSinceStep >= timeBetweenStep) {
             footstepRandomIndex = Random.Range(0, 3);
             playerAudioSource.clip = audioManager.sound.footstep[footstepRandomIndex]; //takes audio clip from audiomanager gameobject
             playerAudioSource.pitch = Random.Range(0.95f, 1.05f);

@@ -239,6 +239,8 @@ MonoBehaviour:
   jumpVelocity: 0
   maxDoubleJumps: 1
   timeBetweenStep: 0
+  heightPadding: 0
+  raycastFireDistance: 0
   isJumping: 0
   isWalking: 0
   isGrounded: 0
