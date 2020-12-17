@@ -233,12 +233,14 @@ MonoBehaviour:
   pushPower: 6
   jumpImpulse: 1.5
   dashImpulse: 15
-  dashCooldown: 0
   airControl: 0
   dashLimit: 100
   jumpVelocity: 0
   maxDoubleJumps: 1
-  timeBetweenStep: 0
+  timeBetweenStep: 0.4
+  dashText: {fileID: 0}
+  dashChargeRate: 0.75
+  dashCharge: 100
   heightPadding: 0
   raycastFireDistance: 0
   isJumping: 0
