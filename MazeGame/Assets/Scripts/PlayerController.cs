@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
     //Inspector fields
-    [SerializeField] int movementSpeed;
+    [SerializeField] public float movementSpeed;
     [SerializeField] float mouseSensitivity;
     [SerializeField] Transform playerCam;
     [SerializeField] float gravity;
@@ -18,14 +18,17 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] int maxDoubleJumps;
     [SerializeField] private float timeBetweenStep;
 
+    int OrbsCollected;
+
     //Movement
-    Vector2 movementDirection;
+    [SerializeField] public Vector2 movementDirection;
     Vector3 velocity;
     Vector3 airControlVelocity;
     float downSpeed = 0.0f;
     float airSpeed = 4.0f;
     int doubleJumpCounter;
     float dashTime = 0.25f;
+    [SerializeField] public float airTime = 0.0f;
 
     //Dash
     [SerializeField] Text dashText;
@@ -61,6 +64,8 @@ public class PlayerController : MonoBehaviour {
     private int footstepRandomIndex;
     float timeSinceStep = 0;
 
+    [SerializeField] private ParticleSystem[] playerParticles;
+
     //References
     CharacterController charController;
 
@@ -94,8 +99,10 @@ public class PlayerController : MonoBehaviour {
         charController = GetComponent<CharacterController>();
         playerAudioSource = GetComponent<AudioSource>();
         height = 0.5f;
+        /*
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        */
     }
 
     // Update is called once per frame
@@ -136,11 +143,12 @@ public class PlayerController : MonoBehaviour {
 
         //dashText.text = "DashC: " + dashCharge;
 
+        //Debug.Log(OrbsCollected);
     }
 
     //Gets player input - called in Update()
     private void GetPlayerInput() {
-        movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        //movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         mouseVector = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
         if(Input.GetKeyDown(KeyCode.Space)) {
@@ -156,8 +164,34 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void ButtonAction() {
+        Debug.Log("This button is being clicked");
+    }
+
+    public void GetMobileInput(int movementKey) {
+        switch (movementKey) {
+            case 0:
+                movementDirection = new Vector2(0, 1);
+                break;
+            case 1:
+                movementDirection = new Vector2(0, -1);
+                break;
+            case 2:
+                movementDirection = new Vector2(1, 0);
+                break;
+            case 3:
+                movementDirection = new Vector2(-1, 0);
+                break;
+            case 4:
+                movementDirection = new Vector2(0, 0);
+                break;
+            default:
+                break;
+        }
+    }
+
     //Player movement
-    private void PlayerMovement() {
+    public void PlayerMovement() {
         
         movementDirection.Normalize();
         downSpeed += gravity * Time.deltaTime;
@@ -203,7 +237,6 @@ public class PlayerController : MonoBehaviour {
 
     //jump movement
     private void JumpState() { //convert to coroutine maybe?
-        FallState();
         if(charController.isGrounded) {
 
             jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpImpulse);
@@ -280,7 +313,11 @@ public class PlayerController : MonoBehaviour {
     private void FallState() {
         if(isFalling) {
             charController.slopeLimit = 90.0f;
+            airTime += Time.deltaTime;
             //slopeAngle = 0f;
+        }
+        else {
+            airTime = 0f;
         }
     }
 
@@ -326,6 +363,14 @@ public class PlayerController : MonoBehaviour {
             playerAudioSource.Play();
             timeSinceStep = 0;
             yield return new WaitForSeconds(1);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.tag == "Orb") {
+            Destroy(collision.gameObject);
+            OrbsCollected += 1;
+            //Debug.Log(OrbsCollected);
         }
     }
 }

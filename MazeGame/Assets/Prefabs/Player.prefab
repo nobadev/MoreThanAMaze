@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 7723791134412368109}
   - component: {fileID: 186641975247003592}
   - component: {fileID: 7723791134412368108}
+  - component: {fileID: 1139764012478098073}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -238,6 +239,7 @@ MonoBehaviour:
   jumpVelocity: 0
   maxDoubleJumps: 1
   timeBetweenStep: 0.4
+  airTime: 0
   dashText: {fileID: 0}
   dashChargeRate: 0.75
   dashCharge: 100
@@ -248,6 +250,26 @@ MonoBehaviour:
   isGrounded: 0
   isFalling: 0
   isDashing: 0
+  playerParticles: []
+--- !u!114 &1139764012478098073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7723791134412368116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c942d19407b98984e9664a05254ea01d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7723791134412368108}
+  particles:
+  - {fileID: 198170397927788594, guid: 5490db4cc4dbced44b137549b1a4e6f1, type: 3}
+  - {fileID: 198740395278534412, guid: 745331548a7278640aa059802a9484f9, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &7723791135031414024
 GameObject:
   m_ObjectHideFlags: 0

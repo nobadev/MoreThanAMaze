@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 73.5 52.72" style="enable-background:new 0 0 73.5 52.72;" xml:space="preserve">
+<pattern  y="139.72" width="162" height="162" patternUnits="userSpaceOnUse" id="New_Pattern_3" viewBox="0 -162 162 162" style="overflow:visible;">
+	<g>
+		<rect y="-162" style="fill:none;" width="162" height="162"/>
+		<polygon style="fill:#9BA7B2;" points="0,-162 0,-108 54,-108 		"/>
+		<polygon style="fill:#A6B3BF;" points="54,-162 0,-162 54,-108 		"/>
+		<polygon style="fill:#A6B3BF;" points="108,-162 54,-162 54,-108 		"/>
+		<polygon style="fill:#A6B3BF;" points="108,-162 162,-108 162,-162 		"/>
+		<polygon style="fill:#A6B3BF;" points="0,-108 0,-54 54,-108 		"/>
+		<polygon style="fill:#C7D7E5;" points="0,0 54,0 0,-54 		"/>
+		<polygon style="fill:#B4C1D1;" points="54,0 108,0 108,-54 		"/>
+		<polygon style="fill:#B4C1D1;" points="162,-54 162,-108 108,-54 		"/>
+		<polygon style="fill:#B4C1D1;" points="108,0 162,0 108,-54 		"/>
+		<polygon style="fill:#C7D7E5;" points="162,0 162,-54 108,-54 		"/>
+		<polygon style="fill:#B4C1D1;" points="108,-108 108,-162 54,-108 		"/>
+		<polygon style="fill:#B4C1D1;" points="108,-108 162,-108 108,-162 		"/>
+		<polygon style="fill:#B4C1D1;" points="54,-108 0,-54 54,-54 		"/>
+		<polygon style="fill:#B4C1D1;" points="0,-54 54,0 54,-54 		"/>
+		<polygon style="fill:#B4C1D1;" points="108,-54 108,-108 54,-108 		"/>
+		<polygon style="fill:#BCCAD8;" points="54,-54 108,-54 54,-108 		"/>
+		<polygon style="fill:#C7D7E5;" points="54,-54 54,0 108,-54 		"/>
+		<polygon style="fill:#BCCAD8;" points="108,-54 162,-108 108,-108 		"/>
+	</g>
+</pattern>
+<g id="JumpButton">
+	<path d="M12.75,18.312"/>
+	<polygon style="fill:#595959;" points="36.762,25.47 0.762,52.47 9.762,52.47 36.762,34.47 63.762,52.47 72.762,52.47 	"/>
+	<polygon style="fill:#666666;" points="36.75,0.312 0.75,27.312 9.75,27.312 36.75,9.312 63.75,27.312 72.75,27.312 	"/>
+	<pattern  id="SVGID_1_" xlink:href="#New_Pattern_3" patternTransform="matrix(1 0 0 1 -13.25 -26.6875)">
+	</pattern>
+	<polygon style="fill:url(#SVGID_1_);stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:10;" points="36.75,0.312 0.75,27.312 
+		9.75,27.312 36.75,9.312 63.75,27.312 72.75,27.312 	"/>
+	<pattern  id="SVGID_2_" xlink:href="#New_Pattern_3" patternTransform="matrix(1 0 0 1 -13.25 -26.6875)">
+	</pattern>
+	<polygon style="fill:url(#SVGID_2_);stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:10;" points="36.75,25.47 0.75,52.47 
+		9.75,52.47 36.75,34.47 63.75,52.47 72.75,52.47 	"/>
+</g>
+<g id="Layer_1">
+</g>
+</svg>

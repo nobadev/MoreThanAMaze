@@ -9,6 +9,8 @@ public class UITest : MonoBehaviour
     public Image HealthBar;
     [SerializeField] float maxHealth = 100f;
     [SerializeField] float currentHealth;
+    [SerializeField] float healthChargeRate;
+    bool isHPRestoreRunning;
 
     // Start is called before the first frame update
     void Start()
@@ -20,16 +22,29 @@ public class UITest : MonoBehaviour
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Space)) {
-            StartCoroutine("HPRestore");
+            currentHealth -= 25f;
         }
-
         HealthBar.fillAmount = currentHealth / maxHealth;
+        StatCheck();
     }
 
-    
+    private void StatCheck() {
+        if(currentHealth < maxHealth) {
+            StartCoroutine("HPRestore");
+        }
+    }
     
     private IEnumerator HPRestore() {
-        currentHealth -= 50f;
-        yield return null;
+        if(isHPRestoreRunning) {
+            yield break;
+        }
+
+        isHPRestoreRunning = true;
+        yield return new WaitForSeconds(2f);
+        while(currentHealth < maxHealth) {
+            currentHealth += healthChargeRate;
+        }
+
+        isHPRestoreRunning = false;
     }
 }
